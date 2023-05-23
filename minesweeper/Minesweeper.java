@@ -1,6 +1,5 @@
 /*
 todo:
-make icon filepaths portable
 have icons resize when window size changes instead of when grid is generated (but only if grid isn't empty)
 have adjacent mine count text resize to fit
 hide adjacent mine count if 0
@@ -13,7 +12,6 @@ package minesweeper;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
 import java.util.*;
 import javax.swing.*;
 
@@ -32,11 +30,14 @@ public class Minesweeper {
             new Color(255, 0, 0)
     };
 
-    ImageIcon flag_icon_full = new ImageIcon("C:\\Coding2CodeHarder\\Java\\capstone-project-team-levine\\minesweeper\\assets\\flag.png");
+    String flag_icon_path = "minesweeper/assets/flag.png";
+    ImageIcon flag_icon_full = new ImageIcon(flag_icon_path);
     ImageIcon flag_icon_scaled;
-    ImageIcon mine_icon_full = new ImageIcon("C:\\Coding2CodeHarder\\Java\\capstone-project-team-levine\\minesweeper\\assets\\mine.png");
+    String mine_icon_path = "minesweeper/assets/mine.png";
+    ImageIcon mine_icon_full = new ImageIcon(mine_icon_path);
     ImageIcon mine_icon_scaled;
-    ImageIcon qmark_icon_full = new ImageIcon("C:\\Coding2CodeHarder\\Java\\capstone-project-team-levine\\minesweeper\\assets\\question.png");
+    String qmark_icon_path = "minesweeper/assets/question.png";
+    ImageIcon qmark_icon_full = new ImageIcon(qmark_icon_path);
     ImageIcon qmark_icon_scaled;
     Font tileFont;
 
@@ -140,29 +141,6 @@ public class Minesweeper {
         frame.repaint();
     }
 
-    private int getMaxFittingFontSize(Graphics g, Font font, String string, int width, int height){
-        int minSize = 0;
-        int maxSize = 288;
-        int curSize = font.getSize();
-
-        while (maxSize - minSize > 2){
-            FontMetrics fm = g.getFontMetrics(new Font(font.getName(), font.getStyle(), curSize));
-            int fontWidth = fm.stringWidth(string);
-            int fontHeight = fm.getLeading() + fm.getMaxAscent() + fm.getMaxDescent();
-
-            if ((fontWidth > width) || (fontHeight > height)){
-                maxSize = curSize;
-                curSize = (maxSize + minSize) / 2;
-            }
-            else{
-                minSize = curSize;
-                curSize = (minSize + maxSize) / 2;
-            }
-        }
-
-        return curSize;
-    }
-
     private void updateMineLimit() {
         int max = (int)height_spinner.getValue() * (int)width_spinner.getValue() - 9;
         int mines = (int)mines_spinner.getValue();
@@ -220,7 +198,6 @@ public class Minesweeper {
             offsets[6] = null;
             offsets[7] = null;
         }
-        System.out.println("offsets: " + Arrays.deepToString(offsets));
         return offsets;
     }
 
@@ -253,7 +230,7 @@ public class Minesweeper {
             //System.out.println("generating random position from 1-" + (possible_tiles-i+1));
             locations[i] = random.nextInt(possible_tiles-i) + 1;
         }
-        System.out.println("mine locations: " + Arrays.toString(locations));
+        //System.out.println("mine locations: " + Arrays.toString(locations));
 
         // Arrange tiles on the 2d array, making sure not to place them on each other or tile adjacent to the first tile
         int[] locations_placed = locations.clone();
@@ -278,13 +255,11 @@ public class Minesweeper {
             // Circle around and add adjacent count numbers
             // efficiently avoid OOB indexes by making a list of tiles to check and removing outside ones
             int[][] inc_offsets = findSurroundingOffsets(row, column);
-            System.out.println("row: " + row + " column: " + column);
-            System.out.println();
             for (int[] offset : inc_offsets)
                 if (offset != null)
                     field_layout[row+offset[1]][column+offset[0]]++;
         }
-        System.out.println("placed mine locations: " + Arrays.toString(locations_placed));
+        //System.out.println("placed mine locations: " + Arrays.toString(locations_placed));
     }
 
     private void generateGrid() {
