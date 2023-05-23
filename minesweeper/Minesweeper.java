@@ -16,7 +16,6 @@ import java.util.*;
 import javax.swing.*;
 
 public class Minesweeper {
-    final int width = 500;
     final Color[] tile_colors = {
             new Color(80, 80, 80),
             new Color(0, 140, 255),
@@ -29,17 +28,15 @@ public class Minesweeper {
             new Color(255, 120, 180),
             new Color(255, 0, 0)
     };
-
-    String flag_icon_path = "minesweeper/assets/flag.png";
-    ImageIcon flag_icon_full = new ImageIcon(flag_icon_path);
+    final ImageIcon flag_icon_full = new ImageIcon("minesweeper/assets/flag.png");
     ImageIcon flag_icon_scaled;
-    String mine_icon_path = "minesweeper/assets/mine.png";
-    ImageIcon mine_icon_full = new ImageIcon(mine_icon_path);
+    final ImageIcon mine_icon_full = new ImageIcon("minesweeper/assets/mine.png");
     ImageIcon mine_icon_scaled;
-    String qmark_icon_path = "minesweeper/assets/question.png";
-    ImageIcon qmark_icon_full = new ImageIcon(qmark_icon_path);
+    final ImageIcon qmark_icon_full = new ImageIcon("minesweeper/assets/question.png");
     ImageIcon qmark_icon_scaled;
     Font tileFont;
+
+    int width = 500;
 
     Random random = new Random();
     JFrame frame = new JFrame();
@@ -212,7 +209,6 @@ public class Minesweeper {
                 selection_protected--;
 
         // Possible number of tiles
-        int possible_tiles = field_rows * field_columns - selection_protected;
         int[] locations = new int[field_mines + selection_protected];
 
         // Mark off tiles surrounding first clicked
@@ -228,7 +224,8 @@ public class Minesweeper {
         // Randomly locate tiles
         for (int i = selection_protected; i < locations.length; i++) {
             //System.out.println("generating random position from 1-" + (possible_tiles-i+1));
-            locations[i] = random.nextInt(possible_tiles-i) + 1;
+            locations[i] = random.nextInt((field_rows*field_columns)-i) + 1;
+            System.out.println(i + " new location: " + locations[i]);
         }
         //System.out.println("mine locations: " + Arrays.toString(locations));
 
@@ -250,6 +247,7 @@ public class Minesweeper {
             // Place the value into that position on the 2d array
             int row = (pos-1) / field_columns;
             int column = (pos) - (row*field_columns) - 1;
+            System.out.println(i + " placing mine at location " + pos + ": row " + row + " column " + column);
             field_layout[row][column] = -9;
 
             // Circle around and add adjacent count numbers
